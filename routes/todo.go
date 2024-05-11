@@ -8,8 +8,8 @@ import (
 
 // Define todo routes
 func TodoRoutes(router *gin.Engine) {
-	router.POST("/todo", controllers.Verify, controllers.CreateTodo)
+	router.POST("/todos", controllers.Verify, controllers.CreateTodo)
 	router.GET("/", controllers.Verify, controllers.GetAllTodos)
-	router.PUT("/todo/:idTodo", controllers.Verify, controllers.UpdateTodo)
-	router.DELETE("/todo/:idTodo", controllers.Verify, controllers.DeleteTodo)
+	router.PUT("/todos/:id", controllers.Verify, controllers.UpdateTodo)
+	router.DELETE("/todos/:id", controllers.Verify, controllers.DeleteTodo)
 }

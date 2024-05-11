@@ -130,6 +130,7 @@ func Verify(c *gin.Context) {
 	}
 
 	// Set response for next
-	c.Set("user", user)
+	c.Set("id", user.ID)
+	c.Set("isAdmin", user.IsAdmin)
 	c.Next()
 }
