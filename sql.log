@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS user (
     id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     username VARCHAR(128) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL
+    is_admin BOOL NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS task (
@@ -28,5 +28,5 @@ CREATE TABLE IF NOT EXISTS task (
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id)
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
