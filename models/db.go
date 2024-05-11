@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/go-sql-driver/mysql"
@@ -28,4 +29,6 @@ func InitDB(cfg mysql.Config) {
 
 	// Assign global DB to the connection db var
 	DB = db
+
+	fmt.Println("MySql DB connection established")
 }
