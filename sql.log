@@ -31,5 +31,3 @@ CREATE TABLE IF NOT EXISTS task (
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
-
-INSERT INTO user (username, password) VALUES ("admin", "admin12345");
