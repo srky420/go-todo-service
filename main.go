@@ -48,6 +48,7 @@ func main() {
 
 	routes.AuthRoutes(router)
 	routes.TodoRoutes(router)
+	routes.AdminRoutes(router)
 
 	// Run the server
 	router.Run("localhost:8080")

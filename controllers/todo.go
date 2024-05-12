@@ -49,7 +49,36 @@ func CreateTodo(c *gin.Context) {
 }
 
 func UpdateTodo(c *gin.Context) {
+	// Create body struct
+	var body struct {
+		Title       string `json:"title" binding:"required"`
+		Description string `json:"description" binding:"required"`
+	}
 
+	// Bind body to JSON
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	// Get user from middleware
+	userId, _ := c.MustGet("id").(int64)
+
+	// Get todo id from param and parse it to int64
+	id := c.Param("id")
+	todoId, convErr := strconv.ParseInt(id, 10, 64)
+	if convErr != nil {
+		c.JSON(500, gin.H{"error": "Error updating todo"})
+		return
+	}
+
+	// Delete todo
+	err := models.UpdateTodo(body.Title, body.Description, todoId, userId)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Error updating todo"})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Todo updated successfully"})
 }
 
 func DeleteTodo(c *gin.Context) {

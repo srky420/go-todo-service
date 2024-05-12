@@ -61,13 +61,37 @@ func AddTodo(title string, description string, userId int64) (int64, error) {
 // Remove a todo from db
 func RemoveTodo(id int64, userId int64) error {
 	// Exec delete query
-	_, err := DB.Exec("DELETE FROM task WHERE id = ? AND user_id = ?", id, userId)
-	return err
+	result, err := DB.Exec("DELETE FROM task WHERE id = ? AND user_id = ?", id, userId)
+	if err != nil {
+		return err
+	}
+
+	// Check affected row
+	row, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if row != 1 {
+		return errors.New("expected to affect 1 row")
+	}
+	return nil
 }
 
 // Update a todo in db
 func UpdateTodo(title string, description string, id int64, userId int64) error {
 	// Exec update query
-	_, err := DB.Exec("UPDATE task SET title = ?, description = ? WHERE id = ? AND user_id = ?", title, description, id, userId)
-	return err
+	result, err := DB.Exec("UPDATE task SET title = ?, description = ? WHERE id = ? AND user_id = ?", title, description, id, userId)
+	if err != nil {
+		return err
+	}
+
+	// Check affected row
+	row, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if row != 1 {
+		return errors.New("expected to affect 1 row")
+	}
+	return nil
 }

@@ -15,8 +15,8 @@ var jwtKey = []byte("my_secret_key")
 func Login(c *gin.Context) {
 	// Define body struct
 	var body struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	// Bind JSON body to userSignup struct
@@ -68,9 +68,9 @@ func Login(c *gin.Context) {
 func Signup(c *gin.Context) {
 	// Define body struct
 	var body struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Username string `json:"username" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	// Bind JSON body to userSignup struct
@@ -104,33 +104,4 @@ func Logout(c *gin.Context) {
 	// Remove cookie
 	c.SetCookie("token", "", -1, "/", "localhost", false, true)
 	c.JSON(200, gin.H{"message": "User logged out successfully"})
-}
-
-func Verify(c *gin.Context) {
-	// Get cookie token
-	cookie, err := c.Cookie("token")
-	if err != nil {
-		c.AbortWithStatusJSON(401, gin.H{"error": "Not authorized"})
-		return
-	}
-
-	// Parse token and get claims
-	claims, err := utils.ParseToken(cookie)
-	if err != nil {
-		c.AbortWithStatusJSON(401, gin.H{"error": "Not authorized"})
-		return
-	}
-
-	// Get user from db using email
-	email := claims.StandardClaims.Subject
-	user, err := models.GetUserByEmail(email)
-	if err != nil {
-		c.AbortWithStatusJSON(401, gin.H{"error": "Not authorized"})
-		return
-	}
-
-	// Set response for next
-	c.Set("id", user.ID)
-	c.Set("isAdmin", user.IsAdmin)
-	c.Next()
 }
