@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 	"todo-service/models"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -16,8 +18,8 @@ func main() {
 	router := gin.Default()
 
 	// Load .env
-	err := godotenv.Load(".env")
-	if err != nil {
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
 		log.Fatal("error loading .env file")
 	}
 
@@ -34,17 +36,31 @@ func main() {
 	models.InitDB(cfg)
 
 	// Insert Admin into the table if not exists
-	// Generate password hash
-	// hashedPass, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASS")), bcrypt.DefaultCost)
-	// _, err = models.DB.Exec(`
-	// 	INSERT INTO user
-	// 		(username, email, password, is_admin)
-	// 		VALUES
-	// 		(?, ?, ?, ?);
-	// `, os.Getenv("ADMIN_USER"), os.Getenv("ADMIN_EMAIL"), hashedPass, true)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	_, err := models.GetUserByEmail(os.Getenv("ADMIN_EMAIL"))
+	if err != nil {
+		if err == sql.ErrNoRows {
+
+			// Generate password hash for admin
+			hashedPass, hashErr := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASS")), bcrypt.DefaultCost)
+			if hashErr != nil {
+				log.Fatal(hashErr)
+			}
+
+			// Insert into admin into DB
+			_, inserErr := models.DB.Exec(`
+				INSERT INTO user
+					(username, email, password, is_admin)
+					VALUES
+					(?, ?, ?, ?);
+			`, os.Getenv("ADMIN_USER"), os.Getenv("ADMIN_EMAIL"), hashedPass, true)
+
+			if inserErr != nil {
+				log.Fatal(inserErr)
+			}
+		} else {
+			log.Fatal(err)
+		}
+	}
 
 	routes.AuthRoutes(router)
 	routes.TodoRoutes(router)

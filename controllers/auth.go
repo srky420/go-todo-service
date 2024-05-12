@@ -13,6 +13,10 @@ import (
 var jwtKey = []byte("my_secret_key")
 
 func Login(c *gin.Context) {
+
+	// Remove cookie
+	c.SetCookie("token", "", -1, "/", "localhost", false, true)
+
 	// Define body struct
 	var body struct {
 		Email    string `json:"email" binding:"required"`
