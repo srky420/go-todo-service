@@ -19,7 +19,6 @@ func GetAllTodos(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "Error retreiving data"})
 		return
 	}
-
 	c.JSON(200, gin.H{"id": userId, "isAdmin": isAdmin, "todos": todos})
 }
 

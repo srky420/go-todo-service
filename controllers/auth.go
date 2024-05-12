@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Example key not meant for production use
 var jwtKey = []byte("my_secret_key")
 
 func Login(c *gin.Context) {
@@ -43,7 +44,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Token expiration time
+	// Token expiration time (5 minutes)
 	expiration := time.Now().Add(5 * time.Minute)
 
 	// Create claims for the user
@@ -70,6 +71,10 @@ func Login(c *gin.Context) {
 }
 
 func Signup(c *gin.Context) {
+
+	// Remove cookie
+	c.SetCookie("token", "", -1, "/", "localhost", false, true)
+
 	// Define body struct
 	var body struct {
 		Username string `json:"username" binding:"required"`
@@ -98,10 +103,6 @@ func Signup(c *gin.Context) {
 	}
 
 	c.JSON(201, gin.H{"message": "User created successfully!"})
-}
-
-func Admin(c *gin.Context) {
-
 }
 
 func Logout(c *gin.Context) {
